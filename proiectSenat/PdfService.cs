@@ -18,7 +18,7 @@ namespace proiectSenat
                 Directory.CreateDirectory(OUTPUT_DIR_PATH);
             }
             var pdfs = Directory.EnumerateFiles(PDF_DIR_PATH, "*.pdf");
-            Console.WriteLine($"{pdfs.Count<string>().ToString()} PDF-uri gasite in folderul input.");
+            Console.WriteLine($"{pdfs.Count<string>().ToString()} PDF files found.");
             foreach (var pdf in pdfs)
             {
                 var sb = new StringBuilder();
