@@ -56,7 +56,7 @@ namespace proiectSenat
                         "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz" +
                         "ĂÂÎȘȚăâîșț0123456789.,;:!?()-/\\ ");
 
-                    using (var pix = PixConverter.ToPix((Bitmap)image))
+                    using (var pix = Pix.LoadFromMemory(GetImageBytes((Bitmap)image)))
                     {
                         using (var page = engine.Process(pix))
                         {
@@ -69,6 +69,15 @@ namespace proiectSenat
             {
                 Console.WriteLine($"OCR Error: {ex.Message}");
                 return string.Empty;
+            }
+        }
+
+        private byte[] GetImageBytes(Bitmap bitmap)
+        {
+            using (var ms = new MemoryStream())
+            {
+                bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                return ms.ToArray();
             }
         }
     }
