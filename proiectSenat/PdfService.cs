@@ -9,8 +9,8 @@ namespace proiectSenat
     internal static class PdfService
     {
 
-        private const string PDF_DIR_PATH = @"C:\Users\diap\source\repos\proiectSenat\proiectSenat\input\";
-        private const string OUTPUT_DIR_PATH = @"C:\Users\diap\source\repos\proiectSenat\proiectSenat\output\";
+        private const string PDF_DIR_PATH = @".\input\";
+        private const string OUTPUT_DIR_PATH = @".\output\";
 
         public static void DownloadFromUrl(string url)
         {
@@ -38,25 +38,62 @@ namespace proiectSenat
             }
             var pdfs = Directory.EnumerateFiles(PDF_DIR_PATH, "*.pdf");
             Console.WriteLine($"{pdfs.Count<string>().ToString()} PDF files found.");
+
+            // Initialize OCR processor for image-based PDFs
+            var ocrProcessor = new PdfOcrProcessor();
+
             foreach (var pdf in pdfs)
             {
                 var sb = new StringBuilder();
-                // Extragem textul din PDF folosind PdfPig
-                // am putea folosi iText, dar nu este free for commercial use
-                using (PdfDocument document = PdfDocument.Open(pdf))
+                bool hasTextContent = false;
+
+                // First, try extracting text directly using PdfPig
+                try
                 {
-                    foreach (Page page in document.GetPages())
+                    using (PdfDocument document = PdfDocument.Open(pdf))
                     {
-                        IEnumerable<Word> words = page.GetWords();
-                        foreach (var word in words)
+                        foreach (Page page in document.GetPages())
                         {
-                            sb.Append(word.Text);
-                            sb.Append(' ');
+                            IEnumerable<Word> words = page.GetWords();
+                            foreach (var word in words)
+                            {
+                                sb.Append(word.Text);
+                                sb.Append(' ');
+                                hasTextContent = true;
+                            }
+                            sb.AppendLine("");
                         }
-                        sb.AppendLine("");
+                    }
+
+                    // If no text content was found, use OCR
+                    if (!hasTextContent || sb.Length < 50) // Minimal text threshold
+                    {
+                        Console.WriteLine($"No text content found in {pdf}, using OCR...");
+                        sb.Clear();
+                        string ocrText = ocrProcessor.ExtractTextFromPdf(pdf);
+                        sb.Append(ocrText);
                     }
                 }
-                // Adaugam fisierul .txt in folderul de output
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error with PdfPig extraction for {pdf}: {ex.Message}");
+                    Console.WriteLine("Falling back to OCR...");
+                    
+                    // Fallback to OCR if PdfPig fails
+                    try
+                    {
+                        sb.Clear();
+                        string ocrText = ocrProcessor.ExtractTextFromPdf(pdf);
+                        sb.Append(ocrText);
+                    }
+                    catch (Exception ocrEx)
+                    {
+                        Console.WriteLine($"OCR also failed for {pdf}: {ocrEx.Message}");
+                        sb.AppendLine($"Error processing PDF: {pdf}");
+                    }
+                }
+
+                // Save the extracted text
                 string fileName = Path.GetFileNameWithoutExtension(pdf) + ".txt";
                 string outputPath = Path.Combine(OUTPUT_DIR_PATH, fileName);
                 File.WriteAllText(outputPath, sb.ToString());

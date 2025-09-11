@@ -43,7 +43,53 @@ class Program
     
     static async Task Main()
     {
+        // Test OCR processor first
+        TestOcrProcessor();
+        
         // facem setupul daca nu avem niciun pdf drept documentatie
+        if (PdfService.SetupNeeded())
+        {
             DataSetup();
+        }
+        else
+        {
+            Console.WriteLine("PDF files already exist. Converting to text...");
+            PdfService.ConvertToText();
+        }
+    }
+    
+    static void TestOcrProcessor()
+    {
+        try
+        {
+            Console.WriteLine("Testing PdfOcrProcessor...");
+            
+            // Test if the OCR processor can be instantiated
+            var ocrProcessor = new PdfOcrProcessor();
+            Console.WriteLine("PdfOcrProcessor instantiated successfully!");
+            
+            // Test if tessdata is accessible
+            if (System.IO.Directory.Exists("./tessdata"))
+            {
+                Console.WriteLine("Tessdata directory found!");
+                var files = System.IO.Directory.GetFiles("./tessdata", "*.traineddata");
+                Console.WriteLine($"Found {files.Length} trained data files:");
+                foreach (var file in files)
+                {
+                    Console.WriteLine($"  - {System.IO.Path.GetFileName(file)}");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Tessdata directory not found!");
+            }
+            
+            Console.WriteLine("OCR test completed successfully!");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"OCR test failed: {ex.Message}");
+            Console.WriteLine($"Stack trace: {ex.StackTrace}");
+        }
     }
 }
