@@ -9,8 +9,8 @@ namespace proiectSenat
     internal static class PdfService
     {
 
-        private const string PDF_DIR_PATH = @".\input\";
-        private const string OUTPUT_DIR_PATH = @".\output\";
+        private const string PDF_DIR_PATH = @"..\..\..\input\";
+        private const string OUTPUT_DIR_PATH = @"..\..\..\output\";
 
         public static void DownloadFromUrl(string url)
         {
@@ -68,16 +68,16 @@ namespace proiectSenat
                     // If no text content was found, use OCR
                     if (!hasTextContent || sb.Length < 50) // Minimal text threshold
                     {
-                        Console.WriteLine($"No text content found in {pdf}, using OCR...");
+                        Console.WriteLine($"No text content found in {pdf}, using OCR . . .");
                         sb.Clear();
                         string ocrText = ocrProcessor.ExtractTextFromPdf(pdf);
                         sb.Append(ocrText);
                     }
                 }
-                catch (Exception ex)
+                catch (Exception e)
                 {
-                    Console.WriteLine($"Error with PdfPig extraction for {pdf}: {ex.Message}");
-                    Console.WriteLine("Falling back to OCR...");
+                    Console.WriteLine($"Error with PdfPig extraction for {pdf}: {e.Message}");
+                    Console.WriteLine("Falling back to OCR . . .");
                     
                     // Fallback to OCR if PdfPig fails
                     try
@@ -99,8 +99,6 @@ namespace proiectSenat
                 File.WriteAllText(outputPath, sb.ToString());
                 Console.WriteLine($"{outputPath}");
             }
-            // RAG Architecture cu n8n si MCP
-            // Antrenam modelul pe GPU
         }
 
         public static bool IsDirectoryEmpty(string path)
@@ -112,9 +110,14 @@ namespace proiectSenat
             }
         }
 
-        public static bool SetupNeeded()
+        public static bool DataSetupRequired()
         {
             return (!Directory.Exists(PDF_DIR_PATH) || IsDirectoryEmpty(PDF_DIR_PATH));
+        }
+
+        public static bool PdfProcessingRequired()
+        {
+            return (!Directory.Exists(OUTPUT_DIR_PATH) || IsDirectoryEmpty(OUTPUT_DIR_PATH));
         }
     }
 }

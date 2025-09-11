@@ -8,17 +8,25 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="output\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.ML" Version="4.0.2" />
     <PackageReference Include="PdfPig" Version="0.1.11" />
     <PackageReference Include="PdfiumViewer" Version="2.13.0" />
-    <PackageReference Include="System.Drawing.Common" Version="8.0.0" />
+	<PackageReference Include="PdfiumViewer.Native.x86_64.v8-xfa" Version="2018.4.8.256" />
+	<PackageReference Include="System.Drawing.Common" Version="8.0.0" />
     <PackageReference Include="Tesseract" Version="5.2.0" />
     <PackageReference Include="TorchSharp" Version="0.105.1" />
     <PackageReference Include="TorchSharp-cuda-windows" Version="0.105.1" />
   </ItemGroup>
 
+
+<!-- Copy tessdata files to output directory -->
+<ItemGroup>
+	<None Include="tessdata\**\*" CopyToOutputDirectory="PreserveNewest" />
+</ItemGroup>
+
+<!-- Copy input files to output directory -->
+<ItemGroup>
+	<None Include="input\**\*" CopyToOutputDirectory="PreserveNewest" />
+</ItemGroup>
+	
 </Project>

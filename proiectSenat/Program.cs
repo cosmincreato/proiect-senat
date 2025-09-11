@@ -45,17 +45,13 @@ class Program
     {
         // Test OCR processor first
         TestOcrProcessor();
-        
-        // facem setupul daca nu avem niciun pdf drept documentatie
-        if (PdfService.SetupNeeded())
-        {
+        if (PdfService.DataSetupRequired())
             DataSetup();
-        }
-        else
-        {
-            Console.WriteLine("PDF files already exist. Converting to text...");
+
+        if (PdfService.PdfProcessingRequired())
             PdfService.ConvertToText();
-        }
+
+        Console.WriteLine("Application finished.");
     }
     
     static void TestOcrProcessor()
@@ -69,10 +65,10 @@ class Program
             Console.WriteLine("PdfOcrProcessor instantiated successfully!");
             
             // Test if tessdata is accessible
-            if (System.IO.Directory.Exists("./tessdata"))
+            if (System.IO.Directory.Exists(@"..\..\..\tessdata"))
             {
                 Console.WriteLine("Tessdata directory found!");
-                var files = System.IO.Directory.GetFiles("./tessdata", "*.traineddata");
+                var files = System.IO.Directory.GetFiles(@"..\..\..\tessdata", "*.traineddata");
                 Console.WriteLine($"Found {files.Length} trained data files:");
                 foreach (var file in files)
                 {
@@ -86,10 +82,10 @@ class Program
             
             Console.WriteLine("OCR test completed successfully!");
         }
-        catch (Exception ex)
+        catch (Exception e)
         {
-            Console.WriteLine($"OCR test failed: {ex.Message}");
-            Console.WriteLine($"Stack trace: {ex.StackTrace}");
+            Console.WriteLine($"OCR test failed: {e.Message}");
+            Console.WriteLine($"Stack trace: {e.StackTrace}");
         }
     }
 }

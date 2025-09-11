@@ -31,7 +31,6 @@ namespace proiectSenat
                         using (var image = document.Render(i, 300, 300, true))
                         {
                             string pageText = ExtractTextFromImage(image);
-                            extractedText.AppendLine($"=== Page {i + 1} ===");
                             extractedText.AppendLine(pageText);
                             extractedText.AppendLine();
                         }
