@@ -2,10 +2,10 @@
 
 class Program
 {
-    private static List<Dictionary<string, string>>? projects = new List<Dictionary<string, string>>();
+    private static List<Dictionary<string, string>> projects = new List<Dictionary<string, string>>();
 
     // luam toate proiectele din 1990-2025, le descarcam PDF-urile si le convertim in text
-    static async void DataSetup()
+    static async Task DataSetup()
     {
 
         Console.WriteLine("Starting data setup...");
@@ -40,34 +40,21 @@ class Program
 
         Console.WriteLine("Processing complete.");
     }
-    
-    static async Task Main()
-    {
-        // Test OCR processor first
-        TestOcrProcessor();
-        if (PdfService.DataSetupRequired())
-            DataSetup();
 
-        if (PdfService.PdfProcessingRequired())
-            PdfService.ConvertToText();
-
-        Console.WriteLine("Application finished.");
-    }
-    
     static void TestOcrProcessor()
     {
         try
         {
-            Console.WriteLine("Testing PdfOcrProcessor...");
-            
+            Console.WriteLine("Testing PdfOcrProcessor . . .");
+
             // Test if the OCR processor can be instantiated
             var ocrProcessor = new PdfOcrProcessor();
-            Console.WriteLine("PdfOcrProcessor instantiated successfully!");
-            
+            Console.WriteLine("PdfOcrProcessor instantiated successfully.");
+
             // Test if tessdata is accessible
             if (System.IO.Directory.Exists(@"..\..\..\tessdata"))
             {
-                Console.WriteLine("Tessdata directory found!");
+                Console.WriteLine("Tessdata directory found.");
                 var files = System.IO.Directory.GetFiles(@"..\..\..\tessdata", "*.traineddata");
                 Console.WriteLine($"Found {files.Length} trained data files:");
                 foreach (var file in files)
@@ -77,15 +64,43 @@ class Program
             }
             else
             {
-                Console.WriteLine("Tessdata directory not found!");
+                Console.WriteLine("Tessdata directory not found.");
             }
-            
-            Console.WriteLine("OCR test completed successfully!");
+
+            Console.WriteLine("OCR test completed successfully.");
         }
         catch (Exception e)
         {
             Console.WriteLine($"OCR test failed: {e.Message}");
             Console.WriteLine($"Stack trace: {e.StackTrace}");
         }
+    }
+
+    static void StartupMenu()
+    {
+        Console.WriteLine("Select an option:");
+        Console.WriteLine("1. Setup data (download PDFs and convert to text)");
+        Console.WriteLine("2. Exit");
+        var choice = Console.ReadLine();
+        switch (choice)
+        {
+            case "1":
+                DataSetup().Wait();
+                break;
+            case "2":
+                System.Environment.Exit(1);
+                break;
+            default:
+                Console.WriteLine("Invalid choice. Please select 1 or 2.");
+                break;
+        }
+        StartupMenu();
+    }
+    static async Task Main()
+    {
+        TestOcrProcessor();
+        await Task.Run(() => StartupMenu());
+
+        Console.WriteLine("Application finished.");
     }
 }

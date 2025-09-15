@@ -100,61 +100,6 @@ namespace proiectSenat
             }
         }
 
-        private static List<string> ParseProjPdfs(string xmlContent)
-        {
-            try
-            {
-                List<string> projPdfs = new List<string>();
-                XmlDocument doc = new XmlDocument();
-                doc.LoadXml(xmlContent);
-                
-                // Look for all <traseu> nodes that contain <Fisiere>
-                XmlNodeList traseuNodes = doc.GetElementsByTagName("traseu");
-                Console.WriteLine($"Found {traseuNodes.Count} traseu nodes.");
-                
-                foreach (XmlNode traseu in traseuNodes)
-                {
-                    List<string> pdfUrls = new List<string>();
-                    
-                    // Find the <Fisiere> node within this <traseu>
-                    XmlNode fisiereNode = traseu.SelectSingleNode("Fisiere");
-                    if (fisiereNode != null && fisiereNode.HasChildNodes)
-                    {
-                        // Get all <Fisier> elements
-                        XmlNodeList fisierNodes = fisiereNode.SelectNodes("Fisier");
-                        foreach (XmlNode fisier in fisierNodes)
-                        {
-                            // Extract the URL from CDATA content
-                            string pdfUrl = fisier.InnerText?.Trim();
-                            if (!string.IsNullOrEmpty(pdfUrl))
-                            {
-                                pdfUrls.Add(pdfUrl);
-                            }
-                        }
-                    }
-                    
-                    foreach (var url in pdfUrls)
-                    {
-                        projPdfs.Add(url);
-                    }
-
-                }
-                
-                Console.WriteLine($"Found {projPdfs.Count} traseu nodes with PDF files.");
-                return projPdfs;
-            }
-            catch (XmlException e)
-            {
-                Console.WriteLine($"XML parsing error: {e.Message}");
-                return new List<string>();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine($"General parsing error: {e.Message}");
-                return new List<string>();
-            }
-        }
-
         private static List<string> ParseAllPdfUrls(string xmlContent)
         {
             try

@@ -19,13 +19,21 @@ namespace proiectSenat
                 Directory.CreateDirectory(PDF_DIR_PATH);
             }
 
+            string fileName = Path.GetFileName(new Uri(url).AbsolutePath);
+            string filePath = Path.Combine(PDF_DIR_PATH, fileName);
+
+            // Skip download if file already exists
+            if (File.Exists(filePath))
+            {
+                Console.WriteLine($"Skipping download for {fileName}, already exists in input.");
+                return;
+            }
+
             using (HttpClient client = new HttpClient())
             {
                 var response = client.GetAsync(url).Result;
                 response.EnsureSuccessStatusCode();
                 var fileBytes = response.Content.ReadAsByteArrayAsync().Result;
-                string fileName = Path.GetFileName(new Uri(url).AbsolutePath);
-                string filePath = Path.Combine(PDF_DIR_PATH, fileName);
                 File.WriteAllBytes(filePath, fileBytes);
             }
         }
@@ -36,7 +44,7 @@ namespace proiectSenat
             {
                 Directory.CreateDirectory(OUTPUT_DIR_PATH);
             }
-            var pdfs = Directory.EnumerateFiles(PDF_DIR_PATH, "*.pdf");
+            var pdfs = Directory.EnumerateFiles(PDF_DIR_PATH, "25*.pdf");
             Console.WriteLine($"{pdfs.Count<string>().ToString()} PDF files found.");
 
             // Initialize OCR processor for image-based PDFs
@@ -44,6 +52,16 @@ namespace proiectSenat
 
             foreach (var pdf in pdfs)
             {
+                string fileName = Path.GetFileNameWithoutExtension(pdf) + ".txt";
+                string outputPath = Path.Combine(OUTPUT_DIR_PATH, fileName);
+
+                // Skip conversion if output file already exists
+                if (File.Exists(outputPath))
+                {
+                    Console.WriteLine($"Skipping {pdf} because {outputPath} already exists.");
+                    continue;
+                }
+
                 var sb = new StringBuilder();
                 bool hasTextContent = false;
 
@@ -61,7 +79,7 @@ namespace proiectSenat
                                 sb.Append(' ');
                                 hasTextContent = true;
                             }
-                            sb.AppendLine("");
+                            sb.AppendLine();
                         }
                     }
 
@@ -94,30 +112,9 @@ namespace proiectSenat
                 }
 
                 // Save the extracted text
-                string fileName = Path.GetFileNameWithoutExtension(pdf) + ".txt";
-                string outputPath = Path.Combine(OUTPUT_DIR_PATH, fileName);
                 File.WriteAllText(outputPath, sb.ToString());
                 Console.WriteLine($"{outputPath}");
             }
-        }
-
-        public static bool IsDirectoryEmpty(string path)
-        {
-            IEnumerable<string> items = Directory.EnumerateFileSystemEntries(path);
-            using (IEnumerator<string> en = items.GetEnumerator())
-            {
-                return !en.MoveNext();
-            }
-        }
-
-        public static bool DataSetupRequired()
-        {
-            return (!Directory.Exists(PDF_DIR_PATH) || IsDirectoryEmpty(PDF_DIR_PATH));
-        }
-
-        public static bool PdfProcessingRequired()
-        {
-            return (!Directory.Exists(OUTPUT_DIR_PATH) || IsDirectoryEmpty(OUTPUT_DIR_PATH));
         }
     }
 }
