@@ -9,8 +9,8 @@ namespace proiectSenat
     internal static class PdfService
     {
 
-        private const string PDF_DIR_PATH = @"..\..\..\input\";
-        private const string OUTPUT_DIR_PATH = @"..\..\..\output\";
+        private static readonly string PDF_DIR_PATH = @"..\..\..\input\";
+        private static readonly string OUTPUT_DIR_PATH = @"..\..\..\output\";
 
         public static void DownloadFromUrl(string url)
         {
