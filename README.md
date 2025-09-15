@@ -47,13 +47,23 @@ proiectSenat/
 - **Page-by-Page Extraction**: Maintains document structure with page separators
 - **Clean Output**: Filters and processes text for better readability
 
+### 🧠 Natural Language Processing (NEW!)
+- **Document Indexing**: Automatically indexes all processed text files from the output directory
+- **Question Answering**: Ask questions in Romanian or English about the processed documents
+- **Intelligent Search**: Uses text similarity and relevance scoring to find the most relevant documents
+- **Passage Extraction**: Highlights the most relevant passages from documents that match your questions
+- **Multi-language Support**: Handles Romanian diacritics and both Romanian and English queries
+- **Interactive Interface**: User-friendly command-line interface for asking questions
+
 ## 📦 Dependencies
 
 ```xml
 <PackageReference Include="Microsoft.ML" Version="4.0.2" />
+<PackageReference Include="Microsoft.ML.TensorFlow" Version="4.0.2" />
 <PackageReference Include="PdfPig" Version="0.1.11" />
 <PackageReference Include="PdfiumViewer" Version="2.13.0" />
 <PackageReference Include="System.Drawing.Common" Version="8.0.0" />
+<PackageReference Include="System.Text.Json" Version="8.0.5" />
 <PackageReference Include="Tesseract" Version="5.2.0" />
 <PackageReference Include="TorchSharp" Version="0.105.1" />
 <PackageReference Include="TorchSharp-cuda-windows" Version="0.105.1" />
@@ -96,7 +106,7 @@ proiectSenat/
 
 ## 💻 Usage
 
-### Basic Usage
+### Basic PDF Processing
 
 ```csharp
 var processor = new PdfOcrProcessor();
@@ -110,6 +120,35 @@ Console.WriteLine(extractedText);
 var processor = new PdfOcrProcessor(@"C:\custom\path\to\tessdata");
 string extractedText = processor.ExtractTextFromPdf("document.pdf");
 ```
+
+### 🧠 Natural Language Processing
+
+After running the data setup (option 1) to process PDFs into text files, you can use the NLP interface (option 2) to ask questions about the documents:
+
+```
+Select an option:
+1. Setup data (download PDFs and convert to text)
+2. Natural Language Q&A (ask questions about processed documents)
+3. Exit
+```
+
+#### Example Questions (Romanian):
+- "Ce legi se referă la educație?"
+- "Câți bani sunt alocați pentru digitalizare?"
+- "Ce modificări sunt la Codul Muncii?"
+- "Ce face Agenția pentru Protecția Mediului?"
+- "Când intră în vigoare legea?"
+
+#### Example Questions (English):
+- "What laws relate to education?"
+- "How much money is allocated for digitization?"
+- "What changes are made to the Labor Code?"
+
+#### NLP Interface Commands:
+- `help` - Show example questions and available commands
+- `stats` - Display document indexing statistics
+- `reindex` - Refresh the document index
+- `exit` - Return to main menu
 
 ## 🔧 Configuration
 
@@ -163,6 +202,9 @@ The OCR engine is configured to recognize:
 - Archive text extraction
 - Romanian government document analysis
 - Bulk PDF content indexing
+- **Natural language querying of document collections**
+- **Interactive document exploration and research**
+- **Automated question-answering systems for legal documents**
 
 ## 🤝 Contributing
 
