@@ -1,128 +1,116 @@
-﻿using System.Text;
+﻿namespace proiectSenat;
+
+using System.Text;
 using UglyToad.PdfPig;
 using UglyToad.PdfPig.Content;
 
-
-namespace proiectSenat
+static class PdfService
 {
-    internal static class PdfService
+    static PdfService()
     {
+        if (!Directory.Exists(Directories.PdfDirPath))
+            Directory.CreateDirectory(Directories.PdfDirPath);
 
-        private static readonly string BaseDirPath = AppDomain.CurrentDomain.BaseDirectory;
-        private static readonly string PdfDirPath = Path.Combine(BaseDirPath, "input");
-        private static readonly string TxtDirPath = Path.Combine(BaseDirPath, "output");
 
-        static PdfService()
+        if (!Directory.Exists(Directories.TxtDirPath))
+            Directory.CreateDirectory(Directories.TxtDirPath);
+    }
+
+    public static void DownloadFromUrl(string url)
+    {
+        string fileName = Path.GetFileName(new Uri(url).AbsolutePath);
+        string filePath = Path.Combine(Directories.PdfDirPath, fileName);
+
+        // Skip download if file already exists
+        if (File.Exists(filePath))
         {
-            if (!Directory.Exists(PdfDirPath))
-            {
-                Console.WriteLine("NOT EXISTA");
-                Directory.CreateDirectory(PdfDirPath);
-            }
-            else
-            {
-                Console.WriteLine("EXISTA");
-            }
+            Console.WriteLine($"Skipping download for {fileName}, already exists in input.");
+            return;
         }
 
-        public static void DownloadFromUrl(string url)
+        using (HttpClient client = new HttpClient())
         {
-            string fileName = Path.GetFileName(new Uri(url).AbsolutePath);
-            string filePath = Path.Combine(PdfDirPath, fileName);
-
-            // Skip download if file already exists
-            if (File.Exists(filePath))
-            {
-                Console.WriteLine($"Skipping download for {fileName}, already exists in input.");
-                return;
-            }
-
-            using (HttpClient client = new HttpClient())
-            {
-                var response = client.GetAsync(url).Result;
-                response.EnsureSuccessStatusCode();
-                var fileBytes = response.Content.ReadAsByteArrayAsync().Result;
-                File.WriteAllBytes(filePath, fileBytes);
-            }
+            var response = client.GetAsync(url).Result;
+            response.EnsureSuccessStatusCode();
+            var fileBytes = response.Content.ReadAsByteArrayAsync().Result;
+            File.WriteAllBytes(filePath, fileBytes);
         }
+    }
 
-        public static void ConvertToText()
+    public static void ConvertToText()
+    {
+        Console.WriteLine("Starting PDF to text conversion...");
+        var pdfs = Directory.EnumerateFiles(Directories.PdfDirPath, "25*.pdf");
+        Console.WriteLine($"{pdfs.Count<string>().ToString()} PDF files found.");
+
+        // Initialize OCR processor for image-based PDFs
+        var ocrProcessor = new PdfOcrProcessor();
+
+        foreach (var pdf in pdfs)
         {
-            if (!Directory.Exists(TxtDirPath))
+            string fileName = Path.GetFileNameWithoutExtension(pdf) + ".txt";
+            string outputPath = Path.Combine(Directories.TxtDirPath, fileName);
+
+            // Skip conversion if output file already exists
+            if (File.Exists(outputPath))
             {
-                Directory.CreateDirectory(TxtDirPath);
+                Console.WriteLine($"Skipping {pdf} because {outputPath} already exists.");
+                continue;
             }
-            var pdfs = Directory.EnumerateFiles(PdfDirPath, "25*.pdf");
-            Console.WriteLine($"{pdfs.Count<string>().ToString()} PDF files found.");
 
-            // Initialize OCR processor for image-based PDFs
-            var ocrProcessor = new PdfOcrProcessor();
+            var sb = new StringBuilder();
+            bool hasTextContent = false;
 
-            foreach (var pdf in pdfs)
+            // First, try extracting text directly using PdfPig
+            try
             {
-                string fileName = Path.GetFileNameWithoutExtension(pdf) + ".txt";
-                string outputPath = Path.Combine(TxtDirPath, fileName);
-
-                // Skip conversion if output file already exists
-                if (File.Exists(outputPath))
+                using (PdfDocument document = PdfDocument.Open(pdf))
                 {
-                    Console.WriteLine($"Skipping {pdf} because {outputPath} already exists.");
-                    continue;
+                    foreach (Page page in document.GetPages())
+                    {
+                        IEnumerable<Word> words = page.GetWords();
+                        foreach (var word in words)
+                        {
+                            sb.Append(word.Text);
+                            sb.Append(' ');
+                            hasTextContent = true;
+                        }
+
+                        sb.AppendLine();
+                    }
                 }
 
-                var sb = new StringBuilder();
-                bool hasTextContent = false;
+                // If no text content was found, use OCR
+                if (!hasTextContent || sb.Length < 50) // Minimal text threshold
+                {
+                    Console.WriteLine($"No text content found in {pdf}, using OCR...");
+                    sb.Clear();
+                    string ocrText = ocrProcessor.ExtractTextFromPdf(pdf);
+                    sb.Append(ocrText);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Error with PdfPig extraction for {pdf}: {e.Message}");
+                Console.WriteLine("Falling back to OCR...");
 
-                // First, try extracting text directly using PdfPig
+                // Fallback to OCR if PdfPig fails
                 try
                 {
-                    using (PdfDocument document = PdfDocument.Open(pdf))
-                    {
-                        foreach (Page page in document.GetPages())
-                        {
-                            IEnumerable<Word> words = page.GetWords();
-                            foreach (var word in words)
-                            {
-                                sb.Append(word.Text);
-                                sb.Append(' ');
-                                hasTextContent = true;
-                            }
-                            sb.AppendLine();
-                        }
-                    }
-
-                    // If no text content was found, use OCR
-                    if (!hasTextContent || sb.Length < 50) // Minimal text threshold
-                    {
-                        Console.WriteLine($"No text content found in {pdf}, using OCR . . .");
-                        sb.Clear();
-                        string ocrText = ocrProcessor.ExtractTextFromPdf(pdf);
-                        sb.Append(ocrText);
-                    }
+                    sb.Clear();
+                    string ocrText = ocrProcessor.ExtractTextFromPdf(pdf);
+                    sb.Append(ocrText);
                 }
-                catch (Exception e)
+                catch (Exception ocrEx)
                 {
-                    Console.WriteLine($"Error with PdfPig extraction for {pdf}: {e.Message}");
-                    Console.WriteLine("Falling back to OCR . . .");
-                    
-                    // Fallback to OCR if PdfPig fails
-                    try
-                    {
-                        sb.Clear();
-                        string ocrText = ocrProcessor.ExtractTextFromPdf(pdf);
-                        sb.Append(ocrText);
-                    }
-                    catch (Exception ocrEx)
-                    {
-                        Console.WriteLine($"OCR also failed for {pdf}: {ocrEx.Message}");
-                        sb.AppendLine($"Error processing PDF: {pdf}");
-                    }
+                    Console.WriteLine($"OCR also failed for {pdf}: {ocrEx.Message}");
+                    sb.AppendLine($"Error processing PDF: {pdf}");
                 }
-
-                // Save the extracted text
-                File.WriteAllText(outputPath, sb.ToString());
-                Console.WriteLine($"{outputPath}");
             }
+
+            // Save the extracted text
+            File.WriteAllText(outputPath, sb.ToString());
+            Console.WriteLine($"{outputPath}");
         }
     }
 }

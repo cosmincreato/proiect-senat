@@ -8,7 +8,7 @@
         static async Task DataSetup()
         {
             Console.WriteLine("== Data Setup ==");
-            Console.WriteLine("Starting data setup . . .");
+            Console.WriteLine("Starting data setup...");
 
             foreach (int an in Enumerable.Range(1990, 36))
             {
@@ -37,6 +37,7 @@
             }
 
             PdfService.ConvertToText();
+            ChunkTextFiles.ChunkText();
 
 
             Console.WriteLine("Processing complete.");
@@ -46,17 +47,14 @@
         {
             try
             {
-                string baseDir = AppDomain.CurrentDomain.BaseDirectory;
-                string tessdataPath = Path.Combine(baseDir, "tessdata");
-                
                 Console.WriteLine("== OCR Processor Testing ==");
-                Console.WriteLine("Testing PdfOcrProcessor . . .");
+                Console.WriteLine("Testing PdfOcrProcessor...");
 
                 // Test if tessdata is accessible
-                if (Directory.Exists(tessdataPath))
+                if (Directory.Exists(Directories.TessdataDirPath))
                 {
                     Console.WriteLine("Tessdata directory found.");
-                    var files = Directory.GetFiles(tessdataPath, "*.traineddata");
+                    var files = Directory.GetFiles(Directories.TessdataDirPath, "*.traineddata");
                     Console.WriteLine($"Found {files.Length} trained data files:");
                     foreach (var file in files)
                     {
