@@ -1,5 +1,4 @@
-﻿using System.Net;
-using System.Text;
+﻿using System.Text;
 using UglyToad.PdfPig;
 using UglyToad.PdfPig.Content;
 
@@ -9,18 +8,27 @@ namespace proiectSenat
     internal static class PdfService
     {
 
-        private static readonly string PDF_DIR_PATH = @"..\..\..\input\";
-        private static readonly string OUTPUT_DIR_PATH = @"..\..\..\output\";
+        private static readonly string BaseDirPath = AppDomain.CurrentDomain.BaseDirectory;
+        private static readonly string PdfDirPath = Path.Combine(BaseDirPath, "input");
+        private static readonly string TxtDirPath = Path.Combine(BaseDirPath, "output");
+
+        static PdfService()
+        {
+            if (!Directory.Exists(PdfDirPath))
+            {
+                Console.WriteLine("NOT EXISTA");
+                Directory.CreateDirectory(PdfDirPath);
+            }
+            else
+            {
+                Console.WriteLine("EXISTA");
+            }
+        }
 
         public static void DownloadFromUrl(string url)
         {
-            if (!Directory.Exists(PDF_DIR_PATH))
-            {
-                Directory.CreateDirectory(PDF_DIR_PATH);
-            }
-
             string fileName = Path.GetFileName(new Uri(url).AbsolutePath);
-            string filePath = Path.Combine(PDF_DIR_PATH, fileName);
+            string filePath = Path.Combine(PdfDirPath, fileName);
 
             // Skip download if file already exists
             if (File.Exists(filePath))
@@ -40,11 +48,11 @@ namespace proiectSenat
 
         public static void ConvertToText()
         {
-            if (!Directory.Exists(OUTPUT_DIR_PATH))
+            if (!Directory.Exists(TxtDirPath))
             {
-                Directory.CreateDirectory(OUTPUT_DIR_PATH);
+                Directory.CreateDirectory(TxtDirPath);
             }
-            var pdfs = Directory.EnumerateFiles(PDF_DIR_PATH, "25*.pdf");
+            var pdfs = Directory.EnumerateFiles(PdfDirPath, "25*.pdf");
             Console.WriteLine($"{pdfs.Count<string>().ToString()} PDF files found.");
 
             // Initialize OCR processor for image-based PDFs
@@ -53,7 +61,7 @@ namespace proiectSenat
             foreach (var pdf in pdfs)
             {
                 string fileName = Path.GetFileNameWithoutExtension(pdf) + ".txt";
-                string outputPath = Path.Combine(OUTPUT_DIR_PATH, fileName);
+                string outputPath = Path.Combine(TxtDirPath, fileName);
 
                 // Skip conversion if output file already exists
                 if (File.Exists(outputPath))

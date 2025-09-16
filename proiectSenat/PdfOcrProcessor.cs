@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
+﻿using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Text;
 using PdfiumViewer;
 using Tesseract;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Formats.Png;
 
 namespace proiectSenat
 {
@@ -23,7 +23,6 @@ namespace proiectSenat
 
             try
             {
-                // Convert PDF to images
                 using (var document = PdfDocument.Load(pdfPath))
                 {
                     for (int i = 0; i < document.PageCount; i++)
@@ -45,7 +44,7 @@ namespace proiectSenat
             return extractedText.ToString();
         }
 
-        private string ExtractTextFromImage(Image image)
+        private string ExtractTextFromImage(object image)
         {
             try
             {
@@ -55,7 +54,8 @@ namespace proiectSenat
                         "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz" +
                         "ĂÂÎȘȚăâîșț0123456789.,;:!?()-/\\ ");
 
-                    using (var pix = Pix.LoadFromMemory(GetImageBytes((Bitmap)image)))
+                    byte[] imageBytes = GetImageBytes(image);
+                    using (var pix = Pix.LoadFromMemory(imageBytes))
                     {
                         using (var page = engine.Process(pix))
                         {
@@ -71,12 +71,32 @@ namespace proiectSenat
             }
         }
 
-        private byte[] GetImageBytes(Bitmap bitmap)
+        private byte[] GetImageBytes(object image)
         {
-            using (var ms = new MemoryStream())
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-                return ms.ToArray();
+                using (var ms = new MemoryStream())
+                {
+                    ((Bitmap)image).Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                    return ms.ToArray();
+                }
+            }
+            else
+            {
+                using (var ms = new MemoryStream())
+                {
+                    // Convert System.Drawing.Bitmap to BMP stream
+                    using (var bmpStream = new MemoryStream())
+                    {
+                        ((Bitmap)image).Save(bmpStream, System.Drawing.Imaging.ImageFormat.Bmp);
+                        bmpStream.Position = 0;
+                        using (var imgSharp = SixLabors.ImageSharp.Image.Load<Rgba32>(bmpStream))
+                        {
+                            imgSharp.Save(ms, new PngEncoder());
+                        }
+                    }
+                    return ms.ToArray();
+                }
             }
         }
     }

@@ -4,7 +4,7 @@ namespace proiectSenat
 {
     public static class ProjectsService
     {
-        private static readonly HttpClient sharedClient = new()
+        private static readonly HttpClient SharedClient = new()
         {
             BaseAddress = new Uri("https://www.senat.ro/"),
         };
@@ -14,7 +14,7 @@ namespace proiectSenat
             try
             {
                 string endpoint = $"exportdata.asmx/ListaProiectelor?An={an}&NrSenat={nrSenat}&NrDeputati={nrDeputati}";
-                HttpResponseMessage response = await sharedClient.GetAsync(endpoint);
+                HttpResponseMessage response = await SharedClient.GetAsync(endpoint);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -40,17 +40,17 @@ namespace proiectSenat
             }
         }
 
-        public static async Task<List<string>> GetAllPdfUrlsAsync(string nr_se = "", string an = "")
+        public static async Task<List<string>> GetAllPdfUrlsAsync(string nrSe = "", string an = "")
         {
             try
             {
-                string endpoint = $"/exportdata.asmx/proiect_xml?NR_SE={nr_se}&AN_SE={an}";
-                HttpResponseMessage response = await sharedClient.GetAsync(endpoint);
+                string endpoint = $"/exportdata.asmx/proiect_xml?NR_SE={nrSe}&AN_SE={an}";
+                HttpResponseMessage response = await SharedClient.GetAsync(endpoint);
 
                 if (response.IsSuccessStatusCode)
                 {
                     string content = await response.Content.ReadAsStringAsync();
-                    Console.WriteLine($"GET response for NR_SE={nr_se}, An={an}");
+                    Console.WriteLine($"GET response for NR_SE={nrSe}, An={an}");
                     return ParseAllPdfUrls(content);
                 }
                 else
@@ -114,7 +114,7 @@ namespace proiectSenat
                 
                 foreach (XmlNode fisier in fisierNodes)
                 {
-                    string pdfUrl = fisier.InnerText?.Trim();
+                    string pdfUrl = fisier.InnerText.Trim();
                     if (!string.IsNullOrEmpty(pdfUrl))
                     {
                         allPdfUrls.Add(pdfUrl);
