@@ -8,7 +8,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="BERTTokenizers" Version="1.2.0" />
     <PackageReference Include="Docnet.Core" Version="2.7.0-alpha.1" />
+    <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.22.1" />
     <PackageReference Include="PdfPig" Version="0.1.11" />
     <PackageReference Include="PdfiumViewer" Version="2.13.0" />
 	<PackageReference Include="PdfiumViewer.Native.x86_64.v8-xfa" Version="2018.4.8.256" />
@@ -27,6 +29,9 @@
 <!-- Copy input files to output directory -->
 <ItemGroup>
 	<None Include="input\**\*" CopyToOutputDirectory="PreserveNewest" />
+</ItemGroup>
+<ItemGroup>
+  <Folder Include="models\" />
 </ItemGroup>
 	
 </Project>

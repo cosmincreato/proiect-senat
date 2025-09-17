@@ -6,7 +6,7 @@ public static class ChunkTextFiles
     {
         Console.WriteLine("Starting text chunking process...");
         int chunkSize = 1000; // characters per chunk
-        
+
         if (!Directory.Exists(Directories.ChunkedTxtDirPath))
             Directory.CreateDirectory(Directories.ChunkedTxtDirPath);
 
@@ -18,18 +18,28 @@ public static class ChunkTextFiles
             // Optional cleaning step
             text = text.Replace("\r\n", " ").Replace("\n", " ").Replace("\r", " ").Trim();
 
-            int totalChunks = (int)Math.Ceiling((double)text.Length / chunkSize);
-            for (int i = 0; i < totalChunks; i++)
+            int startIndex = 0;
+            int chunkIndex = 1;
+            while (startIndex < text.Length)
             {
-                int startIndex = i * chunkSize;
-                int length = Math.Min(chunkSize, text.Length - startIndex);
-                string chunk = text.Substring(startIndex, length);
+                int endIndex = Math.Min(startIndex + chunkSize, text.Length);
 
-                // originalfilename_chunkN.txt
-                string chunkFileName = $"{fileName}_chunk{i + 1}.txt";
+                if (endIndex < text.Length)
+                {
+                    int lastSpace = text.LastIndexOf(' ', endIndex - 1, endIndex - startIndex);
+                    if (lastSpace > startIndex)
+                        endIndex = lastSpace + 1;
+                }
+
+                string chunk = text.Substring(startIndex, endIndex - startIndex);
+
+                string chunkFileName = $"{fileName}_chunk{chunkIndex}.txt";
                 string outputPath = Path.Combine(Directories.ChunkedTxtDirPath, chunkFileName);
 
                 File.WriteAllText(outputPath, chunk);
+
+                startIndex = endIndex;
+                chunkIndex++;
             }
         }
     }
