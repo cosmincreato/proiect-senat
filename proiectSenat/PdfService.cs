@@ -40,8 +40,8 @@ static class PdfService
     public static void ConvertToText()
     {
         Console.WriteLine("Starting PDF to text conversion...");
-        var pdfs = Directory.EnumerateFiles(Directories.PdfDirPath, "25*.pdf");
-        Console.WriteLine($"{pdfs.Count<string>().ToString()} PDF files found.");
+        var pdfs = Directory.EnumerateFiles(Directories.PdfDirPath, "*.pdf");
+        Console.WriteLine($"{pdfs.Count().ToString()} PDF files found.");
 
         // Initialize OCR processor for image-based PDFs
         var ocrProcessor = new PdfOcrProcessor();

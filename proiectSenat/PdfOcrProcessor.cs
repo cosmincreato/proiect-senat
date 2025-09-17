@@ -1,22 +1,24 @@
-﻿namespace proiectSenat;
-
-using System.Drawing;
-using System.Runtime.InteropServices;
-using System.Text;
-using PdfiumViewer;
-using Tesseract;
+﻿using Docnet.Core;
+using Docnet.Core.Models;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Formats.Png;
+using System.Text;
+using Tesseract;
+
+namespace proiectSenat;
 
 public class PdfOcrProcessor
 {
-    private static readonly string BuildDirPath = AppDomain.CurrentDomain.BaseDirectory;
-    private static readonly string BaseDirPath = Directory.GetParent(BuildDirPath).Parent.Parent.Parent.FullName;
-    private readonly string _tessdataPath = Path.Combine(BaseDirPath, "tessdata");
+    private readonly string _tessdataPath;
 
-    public PdfOcrProcessor(string tessdataPath = @".\tessdata")
+    public PdfOcrProcessor(string tessdataPath = null)
     {
-        _tessdataPath = tessdataPath;
+        _tessdataPath = tessdataPath ?? Directories.TessdataDirPath;
+        if (!Directory.Exists(_tessdataPath))
+        {
+            throw new DirectoryNotFoundException($"Tessdata directory not found at {_tessdataPath}");
+        }
     }
 
     public string ExtractTextFromPdf(string pdfPath)
@@ -25,15 +27,24 @@ public class PdfOcrProcessor
 
         try
         {
-            using (var document = PdfDocument.Load(pdfPath))
+            using (var docReader = DocLib.Instance.GetDocReader(pdfPath, new PageDimensions(1080, 1920)))
             {
-                for (int i = 0; i < document.PageCount; i++)
+                int pageCount = docReader.GetPageCount();
+                for (int i = 0; i < pageCount; i++)
                 {
-                    using (var image = document.Render(i, 300, 300, true))
+                    using (var pageReader = docReader.GetPageReader(i))
                     {
-                        string pageText = ExtractTextFromImage(image);
-                        extractedText.AppendLine(pageText);
-                        extractedText.AppendLine();
+                        var rawBytes = pageReader.GetImage();
+                        int width = pageReader.GetPageWidth();
+                        int height = pageReader.GetPageHeight();
+
+                        // Convert rawBytes to ImageSharp Image<Rgba32>
+                        using (var image = Image.LoadPixelData<Rgba32>(rawBytes, width, height))
+                        {
+                            string pageText = ExtractTextFromImage(image);
+                            extractedText.AppendLine(pageText);
+                            extractedText.AppendLine();
+                        }
                     }
                 }
             }
@@ -46,7 +57,7 @@ public class PdfOcrProcessor
         return extractedText.ToString();
     }
 
-    private string ExtractTextFromImage(object image)
+    private string ExtractTextFromImage(Image<Rgba32> image)
     {
         try
         {
@@ -73,33 +84,12 @@ public class PdfOcrProcessor
         }
     }
 
-    private byte[] GetImageBytes(object image)
+    private byte[] GetImageBytes(Image<Rgba32> image)
     {
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        using (var ms = new MemoryStream())
         {
-            using (var ms = new MemoryStream())
-            {
-                ((Bitmap)image).Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-                return ms.ToArray();
-            }
-        }
-        else
-        {
-            using (var ms = new MemoryStream())
-            {
-                // Convert System.Drawing.Bitmap to BMP stream
-                using (var bmpStream = new MemoryStream())
-                {
-                    ((Bitmap)image).Save(bmpStream, System.Drawing.Imaging.ImageFormat.Bmp);
-                    bmpStream.Position = 0;
-                    using (var imgSharp = SixLabors.ImageSharp.Image.Load<Rgba32>(bmpStream))
-                    {
-                        imgSharp.Save(ms, new PngEncoder());
-                    }
-                }
-
-                return ms.ToArray();
-            }
+            image.Save(ms, new PngEncoder());
+            return ms.ToArray();
         }
     }
 }

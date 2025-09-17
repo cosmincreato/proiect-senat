@@ -102,7 +102,8 @@
         static async Task Main()
         {
             TestOcrProcessor();
-            await Task.Run(() => StartupMenu());
+            PdfService.ConvertToText();
+            // await Task.Run(() => StartupMenu());
             Console.WriteLine("Application finished.");
         }
     }
