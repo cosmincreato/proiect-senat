@@ -2,15 +2,15 @@
 
 This project is developed as part of my internship at the Romanian Senate. It is a modern Retrieval-Augmented Generation pipeline designed to process and embed large legal corpora, enabling semantic search and contextually-aware responses with Large Language Models.
 
+![alt text](https://i.imgur.com/5FPuxzi.png)
 ---
 
 ## Features
 
-- **Text Chunking & Embedding**: Preprocesses and splits large documents, then generates vector embeddings using the `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` model.
-- **Embeddings Storage**: Stores embeddings and associated text segments in `embeddings.csv` for downstream retrieval.
+- **Text Chunking & Embedding**: Preprocesses and splits large documents, then maps sentences & paragraphs to a 384 dimensional dense vector space using the [`sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2`](https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2) model.
+- **Embeddings Storage**: Stores embeddings and associated text segments in `embeddings.json` for downstream retrieval.
 - **RAG Workflow**: Enables retrieval of relevant text segments in response to user queries, providing augmented prompts to LLMs for improved answers.
-- **Cross-language Orchestration**: Utilizes C# for process orchestration and possible integration into .NET applications.
-- **Script Automation**: Seamless calling of Python scripts (`embedding.py`) from C# for automated embedding generation.
+- **Cross-language Orchestration**: Utilizes C# for process orchestration and possible integration into .NET applications, while calling Python scripts for automation.
 
 ---
 
@@ -46,15 +46,21 @@ pip install numpy<2.0
 
 ### 4. Qdrant Vector Database Setup
 
-- **Recommended:** Use Docker to run Qdrant locally.
+**Recommended:** Use Docker to run Qdrant locally.
 
 ```bash
-docker run -p 6333:6333 qdrant/qdrant
+docker run -p 6333:6333 -p 6334:6334 qdrant/qdrant
 ```
 
-- This command will start Qdrant on [http://localhost:6333](http://localhost:6333)
+- This command will start a Qdrant server in a Docker container.
+- The REST API will be available at [http://localhost:6333](http://localhost:6333)
+- The gRPC API will be available at [http://localhost:6334](http://localhost:6334)
 
-**To persist data between runs:**
+**You can also run the container with a persistent volume:**
 ```bash
-docker run -p 6333:6333 -v qdrant_data:/qdrant/storage qdrant/qdrant
+docker run -p 6333:6333 -p 6334:6334 \
+  -v $(pwd)/qdrant_storage:/qdrant/storage \
+  qdrant/qdrant
 ```
+
+- Open the Qdrant Dashboard and create a new vector collection

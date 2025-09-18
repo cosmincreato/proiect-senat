@@ -1,0 +1,1 @@
+{"schema":{"text":{"type":"text","tokenizer":"whitespace","lowercase":true},"numar_lege":{"type":"text","tokenizer":"whitespace","lowercase":true},"chunk":{"type":"integer","lookup":true,"range":true,"is_principal":null},"an":{"type":"integer","lookup":true,"range":true,"is_principal":null},"fisier":{"type":"text","tokenizer":"whitespace","lowercase":true}}}

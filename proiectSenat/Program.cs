@@ -10,7 +10,7 @@
     {
         private static List<Dictionary<string, string>> _projects = new List<Dictionary<string, string>>();
 
-        // luam toate proiectele din 1990-2025, le descarcam PDF-urile si le convertim in text
+        // Luam toate proiectele din 1990-2025, le descarcam PDF-urile si le convertim in text
         static async Task DataSetup()
         {
             Console.WriteLine("== Data Setup ==");
@@ -42,9 +42,17 @@
                 }
             }
 
+            // Convertim PDF-urile in fisiere text
             PdfService.ConvertToText();
+            // Impartim fisierele text in bucati mai mici
             ChunkTextFiles.ChunkText();
+            // Generam embedding-urile pentru fiecare bucata de text
             PythonRunner.RunEmbeddingScript();
+            // Luam punctele din fisierul JSON si le urcam in baza de date vectoriala Qdrant
+            var path = Path.Combine(Directories.BaseDirPath, "embeddings.json");
+            List<QdrantPoint> points = PointService.LoadPoints(path);
+            var uploader = new QdrantUploader("localhost", 6334, "proiect-senat");
+            await uploader.UploadPointsAsync(points);
 
             Console.WriteLine("Processing complete.");
         }
@@ -109,6 +117,12 @@
             TestOcrProcessor();
             // await Task.Run(() => StartupMenu());
             PythonRunner.RunEmbeddingScript();
+            
+            // Incarcam punctele din fisierul JSON si le urcam in Qdrant
+            var path = Path.Combine(Directories.BaseDirPath, "embeddings.json");
+            List<QdrantPoint> points = PointService.LoadPoints(path);
+            var uploader = new QdrantUploader("localhost", 6334, "proiect-senat");
+            await uploader.UploadPointsAsync(points);
             Console.WriteLine("Application finished.");
         }
     }

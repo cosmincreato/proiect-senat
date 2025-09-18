@@ -367,4 +367,4 @@ FodyWeavers.xsd
 /proiectSenat/input/
 /proiectSenat/output/
 /proiectSenat/chunked_output/
-/proiectSenat/embeddings.csv
+/proiectSenat/embeddings.json
