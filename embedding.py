@@ -4,6 +4,10 @@ import csv
 
 input_dir = 'proiectSenat/chunked_output'
 sentences = []
+
+print("Starting Python embedding script...")
+
+
 for filename in os.listdir(input_dir):
     filepath = os.path.join(input_dir, filename)
     if os.path.isfile(filepath):
@@ -11,6 +15,8 @@ for filename in os.listdir(input_dir):
             sentences.extend([line.strip() for line in f if line.strip()])
 
 model = SentenceTransformer('sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2')
+
+print("Starting text embedding...")
 embeddings = model.encode(sentences, show_progress_bar=True)
 
 with open('proiectSenat/embeddings.csv', 'w', newline='', encoding='utf-8') as f:

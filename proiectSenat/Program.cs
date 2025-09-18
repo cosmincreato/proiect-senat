@@ -44,6 +44,7 @@
 
             PdfService.ConvertToText();
             ChunkTextFiles.ChunkText();
+            PythonRunner.RunEmbeddingScript();
 
             Console.WriteLine("Processing complete.");
         }
@@ -84,7 +85,7 @@
         {
             Console.WriteLine("== Main Menu ==");
             Console.WriteLine("Select an option:");
-            Console.WriteLine("1. Setup data (download PDFs and convert to text)");
+            Console.WriteLine("1. Setup data (download PDFs, convert to text, chunk, embed)");
             Console.WriteLine("2. Exit");
             var choice = Console.ReadLine();
             switch (choice)
@@ -107,7 +108,7 @@
         {
             TestOcrProcessor();
             // await Task.Run(() => StartupMenu());
-
+            PythonRunner.RunEmbeddingScript();
             Console.WriteLine("Application finished.");
         }
     }
