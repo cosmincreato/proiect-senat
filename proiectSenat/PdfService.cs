@@ -21,7 +21,6 @@ static class PdfService
         string fileName = Path.GetFileName(new Uri(url).AbsolutePath);
         string filePath = Path.Combine(Directories.PdfDirPath, fileName);
 
-        // Skip download if file already exists
         if (File.Exists(filePath))
         {
             Console.WriteLine($"Skipping download for {fileName}, already exists in input.");
@@ -43,7 +42,7 @@ static class PdfService
         var pdfs = Directory.EnumerateFiles(Directories.PdfDirPath, "*.pdf");
         Console.WriteLine($"{pdfs.Count().ToString()} PDF files found.");
 
-        // Initialize OCR processor for image-based PDFs
+        // OCR processor ca si fallback pentru PdfPig
         var ocrProcessor = new PdfOcrProcessor();
 
         foreach (var pdf in pdfs)
@@ -51,7 +50,6 @@ static class PdfService
             string fileName = Path.GetFileNameWithoutExtension(pdf) + ".txt";
             string outputPath = Path.Combine(Directories.TxtDirPath, fileName);
 
-            // Skip conversion if output file already exists
             if (File.Exists(outputPath))
             {
                 Console.WriteLine($"Skipping {pdf} because {outputPath} already exists.");
@@ -61,7 +59,7 @@ static class PdfService
             var sb = new StringBuilder();
             bool hasTextContent = false;
 
-            // First, try extracting text directly using PdfPig
+            // Extragere text cu PdfPig
             try
             {
                 using (PdfDocument document = PdfDocument.Open(pdf))
@@ -80,8 +78,8 @@ static class PdfService
                     }
                 }
 
-                // If no text content was found, use OCR
-                if (!hasTextContent || sb.Length < 50) // Minimal text threshold
+                // Daca nu s-a gasit text sau e prea putin, folosim OCR
+                if (!hasTextContent || sb.Length < 50) // Minimal threshold
                 {
                     Console.WriteLine($"No text content found in {pdf}, using OCR...");
                     sb.Clear();
@@ -94,7 +92,7 @@ static class PdfService
                 Console.WriteLine($"Error with PdfPig extraction for {pdf}: {e.Message}");
                 Console.WriteLine("Falling back to OCR...");
 
-                // Fallback to OCR if PdfPig fails
+                // Fallback la OCR daca PdfPig esueaza
                 try
                 {
                     sb.Clear();
@@ -107,8 +105,7 @@ static class PdfService
                     sb.AppendLine($"Error processing PDF: {pdf}");
                 }
             }
-
-            // Save the extracted text
+            
             File.WriteAllText(outputPath, sb.ToString());
             Console.WriteLine($"{outputPath}");
         }

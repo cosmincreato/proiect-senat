@@ -38,7 +38,6 @@ public class PdfOcrProcessor
                         int width = pageReader.GetPageWidth();
                         int height = pageReader.GetPageHeight();
 
-                        // Convert rawBytes to ImageSharp Image<Rgba32>
                         using (var image = Image.LoadPixelData<Rgba32>(rawBytes, width, height))
                         {
                             string pageText = ExtractTextFromImage(image);

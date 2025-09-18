@@ -5,7 +5,7 @@ public static class ChunkTextFiles
     public static void ChunkText()
     {
         Console.WriteLine("Starting text chunking process...");
-        int chunkSize = 1000; // characters per chunk
+        int chunkSize = 1000; // ~characters per chunk
 
         if (!Directory.Exists(Directories.ChunkedTxtDirPath))
             Directory.CreateDirectory(Directories.ChunkedTxtDirPath);
@@ -15,7 +15,7 @@ public static class ChunkTextFiles
             string fileName = Path.GetFileNameWithoutExtension(filePath);
             string text = File.ReadAllText(filePath);
 
-            // Optional cleaning step
+            // Cleanup whitespace si newlines
             text = text.Replace("\r\n", " ").Replace("\n", " ").Replace("\r", " ").Trim();
 
             int startIndex = 0;
