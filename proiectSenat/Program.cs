@@ -1,8 +1,5 @@
 ﻿namespace proiectSenat
 {
-    using Microsoft.ML.OnnxRuntime;
-    using Microsoft.ML.OnnxRuntime.Tensors;
-    using BERTTokenizers;
     using System;
     using System.Linq;
     using System.Collections.Generic;
@@ -110,55 +107,6 @@
         {
             TestOcrProcessor();
             // await Task.Run(() => StartupMenu());
-
-            // Use the built-in multilingual tokenizer (no custom vocab possible)
-            var tokenizer = new BertMultilingualTokenizer();
-
-            // Load a compatible ONNX model (multilingual or base)
-            var session = new InferenceSession(Path.Combine(Directories.ModelsDirPath, "model.onnx"));
-
-            // Romanian text example
-            string text = "Aceasta este o propoziție în limba română.";
-            
-            var tokens = tokenizer.Tokenize(text); // List<(string Token, int VocabularyIndex, long SegmentIndex)>
-            var clsToken = tokenizer.Tokenize("[CLS]").First();
-            var sepToken = tokenizer.Tokenize("[SEP]").First();
-            tokens.Insert(0, clsToken);
-            tokens.Add(sepToken);
-
-            // Input IDs are the VocabularyIndex
-            var inputIds = tokens.Select(t => t.VocabularyIndex).ToArray();
-            
-            
-            // Attention mask (1s for all tokens)
-            var attentionMask = Enumerable.Repeat(1L, inputIds.Length).ToArray();
-
-            // Prepare tensors
-            var inputIdsTensor = new DenseTensor<long>(new[] { 1, inputIds.Length });
-            var attentionMaskTensor = new DenseTensor<long>(new[] { 1, inputIds.Length });
-            for (int i = 0; i < inputIds.Length; i++)
-            {
-                inputIdsTensor[0, i] = inputIds[i];
-                attentionMaskTensor[0, i] = attentionMask[i];
-            }
-
-            var inputs = new List<NamedOnnxValue>
-            {
-                NamedOnnxValue.CreateFromTensor("input_ids", inputIdsTensor),
-                NamedOnnxValue.CreateFromTensor("attention_mask", attentionMaskTensor)
-            };
-
-            // Run the model
-            using var results = session.Run(inputs);
-            var hiddenState = results.First().AsTensor<float>();
-
-            // Extract [CLS] embedding (first token)
-            int hiddenSize = hiddenState.Dimensions[2];
-            float[] embedding = new float[hiddenSize];
-            for (int i = 0; i < hiddenSize; i++)
-                embedding[i] = hiddenState[0, 0, i];
-
-            Console.WriteLine("Embedding (first 10 dims): " + string.Join(", ", embedding.Take(10)));
 
             Console.WriteLine("Application finished.");
         }
