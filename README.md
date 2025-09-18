@@ -6,7 +6,7 @@ This project is developed as part of my internship at the Romanian Senate. It is
 
 ## Features
 
-- **Text Chunking & Embedding**: Preprocesses and splits large documents, then generates vector embeddings using state-of-the-art models.
+- **Text Chunking & Embedding**: Preprocesses and splits large documents, then generates vector embeddings using the `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` model.
 - **Embeddings Storage**: Stores embeddings and associated text segments in `embeddings.csv` for downstream retrieval.
 - **RAG Workflow**: Enables retrieval of relevant text segments in response to user queries, providing augmented prompts to LLMs for improved answers.
 - **Cross-language Orchestration**: Utilizes C# for process orchestration and possible integration into .NET applications.
