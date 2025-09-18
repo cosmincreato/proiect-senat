@@ -1,6 +1,6 @@
 # Proiect Senat
 
-This project is developed as part of my internship at the Romanian Senate. It is a modern Retrieval-Augmented Generation (RAG) pipeline designed to process and embed large legal corpora, enabling semantic search and contextually-aware responses with Large Language Models (LLMs). This project leverages both Python and C# (.NET) components for efficient data processing, embedding generation, and orchestration.
+This project is developed as part of my internship at the Romanian Senate. It is a modern Retrieval-Augmented Generation pipeline designed to process and embed large legal corpora, enabling semantic search and contextually-aware responses with Large Language Models.
 
 ---
 
