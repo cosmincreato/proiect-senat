@@ -11,7 +11,7 @@
         private static List<Dictionary<string, string>> _projects = new List<Dictionary<string, string>>();
 
         // Luam toate proiectele din 1990-2025, le descarcam PDF-urile si le convertim in text
-        static async Task DataSetup()
+        static async Task DataSetupAsync()
         {
             Console.WriteLine("== Data Setup ==");
             Console.WriteLine("Starting data setup...");
@@ -47,13 +47,12 @@
             // Impartim fisierele text in bucati mai mici
             ChunkTextFiles.ChunkText();
             // Generam embedding-urile pentru fiecare bucata de text
-            PythonRunner.RunEmbeddingScript();
+            await EmbeddingApiClient.EmbedBatchAsync(Directories.ChunkedTxtDirPath);
             // Luam punctele din fisierul JSON si le urcam in baza de date vectoriala Qdrant
             var path = Path.Combine(Directories.BaseDirPath, "embeddings.json");
             List<QdrantPoint> points = PointService.LoadPoints(path);
             var uploader = new QdrantUploader("localhost", 6334, "proiect-senat");
             await uploader.UploadPointsAsync(points);
-
             Console.WriteLine("Processing complete.");
         }
 
@@ -93,13 +92,13 @@
         {
             Console.WriteLine("== Main Menu ==");
             Console.WriteLine("Select an option:");
-            Console.WriteLine("1. Setup data (download PDFs, convert to text, chunk, embed)");
+            Console.WriteLine("1. Setup data (download PDFs, convert to text, chunk, embed, upload to vector DB)");
             Console.WriteLine("2. Exit");
             var choice = Console.ReadLine();
             switch (choice)
             {
                 case "1":
-                    DataSetup().Wait();
+                    DataSetupAsync().Wait();
                     StartupMenu();
                     break;
                 case "2":
@@ -116,13 +115,6 @@
         {
             TestOcrProcessor();
             // await Task.Run(() => StartupMenu());
-            PythonRunner.RunEmbeddingScript();
-            
-            // Incarcam punctele din fisierul JSON si le urcam in Qdrant
-            var path = Path.Combine(Directories.BaseDirPath, "embeddings.json");
-            List<QdrantPoint> points = PointService.LoadPoints(path);
-            var uploader = new QdrantUploader("localhost", 6334, "proiect-senat");
-            await uploader.UploadPointsAsync(points);
             Console.WriteLine("Application finished.");
         }
     }

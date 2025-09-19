@@ -8,15 +8,35 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7b1195ae-2030-4279-91b6-4c7f27faa35a" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/proiectSenat/Payload.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/proiectSenat/QdrantPoint.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/proiectSenat/QdrantService.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/proiectSenat/QdrantUploader.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/embed_server.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/proiectSenat/EmbeddingApiClient.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.proiectSenat/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.proiectSenat/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/embedding.py" beforeDir="false" afterPath="$PROJECT_DIR$/embedding.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/embedding.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/proiectSenat/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/proiectSenat/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/proiectSenat/PythonRunner.cs" beforeDir="false" afterPath="$PROJECT_DIR$/proiectSenat/PythonRunner.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/proiectSenat/PythonRunner.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/qdrant_storage/collections/proiect-senat/0/segments/713074ac-bf39-4b1b-80f2-f4e66537e817/payload_index/CURRENT" beforeDir="false" afterPath="$PROJECT_DIR$/qdrant_storage/collections/proiect-senat/0/segments/713074ac-bf39-4b1b-80f2-f4e66537e817/payload_index/CURRENT" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/qdrant_storage/collections/proiect-senat/0/segments/713074ac-bf39-4b1b-80f2-f4e66537e817/payload_index/LOG" beforeDir="false" afterPath="$PROJECT_DIR$/qdrant_storage/collections/proiect-senat/0/segments/713074ac-bf39-4b1b-80f2-f4e66537e817/payload_index/LOG" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/qdrant_storage/collections/proiect-senat/0/segments/713074ac-bf39-4b1b-80f2-f4e66537e817/payload_index/MANIFEST-000051" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/qdrant_storage/collections/proiect-senat/0/segments/713074ac-bf39-4b1b-80f2-f4e66537e817/payload_index/OPTIONS-000049" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/qdrant_storage/collections/proiect-senat/0/segments/713074ac-bf39-4b1b-80f2-f4e66537e817/payload_index/OPTIONS-000053" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/qdrant_storage/collections/proiect-senat/0/segments/96c09ec4-0352-4e40-bf4d-8d93100464ef/payload_index/CURRENT" beforeDir="false" afterPath="$PROJECT_DIR$/qdrant_storage/collections/proiect-senat/0/segments/96c09ec4-0352-4e40-bf4d-8d93100464ef/payload_index/CURRENT" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/qdrant_storage/collections/proiect-senat/0/segments/96c09ec4-0352-4e40-bf4d-8d93100464ef/payload_index/LOG" beforeDir="false" afterPath="$PROJECT_DIR$/qdrant_storage/collections/proiect-senat/0/segments/96c09ec4-0352-4e40-bf4d-8d93100464ef/payload_index/LOG" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/qdrant_storage/collections/proiect-senat/0/segments/96c09ec4-0352-4e40-bf4d-8d93100464ef/payload_index/MANIFEST-000060" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/qdrant_storage/collections/proiect-senat/0/segments/96c09ec4-0352-4e40-bf4d-8d93100464ef/payload_index/OPTIONS-000049" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/qdrant_storage/collections/proiect-senat/0/segments/96c09ec4-0352-4e40-bf4d-8d93100464ef/payload_index/OPTIONS-000062" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/qdrant_storage/collections/proiect-senat/0/segments/c574abf8-7661-4e72-9e88-ca2ed40b6d9a/payload_index/CURRENT" beforeDir="false" afterPath="$PROJECT_DIR$/qdrant_storage/collections/proiect-senat/0/segments/c574abf8-7661-4e72-9e88-ca2ed40b6d9a/payload_index/CURRENT" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/qdrant_storage/collections/proiect-senat/0/segments/c574abf8-7661-4e72-9e88-ca2ed40b6d9a/payload_index/LOG" beforeDir="false" afterPath="$PROJECT_DIR$/qdrant_storage/collections/proiect-senat/0/segments/c574abf8-7661-4e72-9e88-ca2ed40b6d9a/payload_index/LOG" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/qdrant_storage/collections/proiect-senat/0/segments/c574abf8-7661-4e72-9e88-ca2ed40b6d9a/payload_index/MANIFEST-000051" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/qdrant_storage/collections/proiect-senat/0/segments/c574abf8-7661-4e72-9e88-ca2ed40b6d9a/payload_index/OPTIONS-000049" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/qdrant_storage/collections/proiect-senat/0/segments/c574abf8-7661-4e72-9e88-ca2ed40b6d9a/payload_index/OPTIONS-000053" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/qdrant_storage/collections/proiect-senat/0/segments/cdcaafbd-f830-4017-a9d5-652d93f8d6cc/payload_index/CURRENT" beforeDir="false" afterPath="$PROJECT_DIR$/qdrant_storage/collections/proiect-senat/0/segments/cdcaafbd-f830-4017-a9d5-652d93f8d6cc/payload_index/CURRENT" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/qdrant_storage/collections/proiect-senat/0/segments/cdcaafbd-f830-4017-a9d5-652d93f8d6cc/payload_index/LOG" beforeDir="false" afterPath="$PROJECT_DIR$/qdrant_storage/collections/proiect-senat/0/segments/cdcaafbd-f830-4017-a9d5-652d93f8d6cc/payload_index/LOG" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/qdrant_storage/collections/proiect-senat/0/segments/cdcaafbd-f830-4017-a9d5-652d93f8d6cc/payload_index/MANIFEST-000051" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/qdrant_storage/collections/proiect-senat/0/segments/cdcaafbd-f830-4017-a9d5-652d93f8d6cc/payload_index/OPTIONS-000049" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/qdrant_storage/collections/proiect-senat/0/segments/cdcaafbd-f830-4017-a9d5-652d93f8d6cc/payload_index/OPTIONS-000053" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -110,7 +130,7 @@
       <workItem from="1758031813017" duration="547000" />
       <workItem from="1758032362880" duration="23466000" />
       <workItem from="1758175615779" duration="1766000" />
-      <workItem from="1758204677299" duration="6360000" />
+      <workItem from="1758204677299" duration="13981000" />
     </task>
     <servers />
   </component>

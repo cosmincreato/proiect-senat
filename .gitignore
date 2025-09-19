@@ -10,7 +10,7 @@
 *.userosscache
 *.sln.docstates
 
-# User-specific files (MonoDevelop/Xamarin Studio)
+# User-specific files (MonoDelop/Xamarin Studio)
 *.userprefs
 
 # Mono auto generated files
@@ -368,3 +368,6 @@ FodyWeavers.xsd
 /proiectSenat/output/
 /proiectSenat/chunked_output/
 /proiectSenat/embeddings.json
+/.venv
+/qdrant_storage/
+
